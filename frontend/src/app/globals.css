@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+/* ─── Soft Pastel Theme Tokens (Matching Prototype) ─── */
+:root {
+  --bg-primary: #FFF5F8;
+  --bg-card: #ffffff;
+  --bg-secondary: #FFF0F5;
+  --bg-pink-light: #FFD6E7;
+  --bg-pink-soft: #FFC1D9;
+  --accent-pink: #F06292;
+  --accent-pink-dark: #C2185B;
+  --accent-pink-deep: #880E4F;
+  --text-dark: #4A1525;
+  --text-muted: #880E4F;
+  --border-pink: #FFC1D9;
+  --border-pink-light: #FFD6E7;
+  --border-pink-soft: #FFB8D2;
+  --shadow-pink: 0 10px 25px rgba(240, 98, 146, 0.15);
+  --shadow-pink-lg: 0 15px 35px rgba(240, 98, 146, 0.25);
+  --shadow-pink-glow: 0 0 25px rgba(240, 98, 146, 0.35);
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-dark);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Custom Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF0F5;
+}
+::-webkit-scrollbar-thumb {
+  background: #FFC1D9;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #F06292;
+}
+
+/* ─── Soft Floating Animation ─── */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.02); }
+}
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+/* ─── Pulse Glow ─── */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(240, 98, 146, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(240, 98, 146, 0.55); }
+}
+.pulse-glow {
+  animation: pulseGlow 2.5s infinite;
+}
+
+/* ─── Glass & Card Styles ─── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-pink-light);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-pink);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: var(--accent-pink);
+  box-shadow: var(--shadow-pink-lg);
+  transform: translateY(-2px);
+}
+
+/* ─── Pink Action Buttons ─── */
+.btn-primary {
+  background: #F06292;
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-xl);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 20px rgba(240, 98, 146, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover {
+  background: #E91E63;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(240, 98, 146, 0.45);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--accent-pink-dark);
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-xl);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 2px solid var(--border-pink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+  background: #FFF0F5;
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+}
+
+/* ─── 3D Flip Card ─── */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* ─── Nav Links ─── */
+.nav-link {
+  color: #880E4F;
+  opacity: 0.8;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-xl);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: #C2185B;
+  background: #FFD6E7;
+  opacity: 1;
+}
+
+.nav-link.active {
+  color: white;
+  background: #F06292;
+  box-shadow: 0 4px 14px rgba(240, 98, 146, 0.35);
+  opacity: 1;
+}
+
+/* ─── Pink Badges ─── */
+.badge-pink {
+  background: #FFD6E7;
+  color: #C2185B;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid #FFC1D9;
+  font-size: 0.75rem;
+}
+
+.badge-deep-pink {
+  background: #F06292;
+  color: white;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+/* ─── Quiz Option Buttons ─── */
+.quiz-opt-btn {
+  width: 100%;
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-xl);
+  border: 2px solid #FFC1D9;
+  background: white;
+  color: #4A1525;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: left;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.quiz-opt-btn:hover {
+  border-color: #F06292;
+  background: #FFF0F5;
+}
+
+.quiz-opt-btn.selected {
+  border-color: #F06292;
+  background: #F06292;
+  color: white;
+  box-shadow: 0 6px 16px rgba(240, 98, 146, 0.3);
+}
+
+.quiz-opt-btn.correct {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.quiz-opt-btn.wrong {
+  border-color: #f43f5e;
+  background: #fff1f2;
+  color: #9f1239;
+}
