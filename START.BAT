@@ -7,11 +7,30 @@ echo     Launching RAG Assistant Study Companion...
 echo ===================================================
 echo.
 
-:: Launch FastAPI Backend in a new window
-echo [1/2] Starting FastAPI Backend on http://127.0.0.1:8000 ...
-start "RAG Assistant - Backend (FastAPI)" cmd /k "cd /d "%~dp0backend" && python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload"
+:: 1. Safety Check: If setup hasn't been run, prompt user
+if not exist "%~dp0frontend\node_modules" (
+    echo [NOTICE] First time launch detected! Dependencies are missing.
+    echo Running SETUP.BAT automatically...
+    echo.
+    call "%~dp0SETUP.BAT"
+    if %errorlevel% neq 0 (
+        echo [ERROR] Setup failed. Please check errors above.
+        pause
+        exit /b 1
+    )
+)
 
-:: Launch Next.js Frontend in a new window
+:: 2. Determine Python Executable (venv or system)
+set BACKEND_PY=python
+if exist "%~dp0backend\venv\Scripts\python.exe" (
+    set BACKEND_PY="%~dp0backend\venv\Scripts\python.exe"
+)
+
+:: 3. Launch FastAPI Backend in a new window
+echo [1/2] Starting FastAPI Backend on http://127.0.0.1:8000 ...
+start "RAG Assistant - Backend (FastAPI)" cmd /k "cd /d "%~dp0backend" && %BACKEND_PY% -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload"
+
+:: 4. Launch Next.js Frontend in a new window
 echo [2/2] Starting Next.js Frontend on http://localhost:3000 ...
 start "RAG Assistant - Frontend (Next.js)" cmd /k "cd /d "%~dp0frontend" && npm run dev"
 
