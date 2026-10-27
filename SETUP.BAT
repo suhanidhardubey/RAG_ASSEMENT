@@ -56,7 +56,6 @@ echo ---------------------------------------------------
 echo [1/2] Setting up Backend (Python)...
 echo ---------------------------------------------------
 cd /d "%~dp0backend"
-
 :: Ensure data & uploads folders exist
 if not exist "data" mkdir "data"
 if not exist "uploads" mkdir "uploads"
