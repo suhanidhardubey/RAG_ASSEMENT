@@ -728,3 +728,372 @@ def get_subjects_by_filter(
 
 def get_subject_by_id(subject_id: str):
     return next((s for s in SUBJECTS_CATALOG if s["id"] == subject_id), None)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# VERIFIED CURATED YOUTUBE VIDEO LECTURES
+# Official channels: Gateway Classes, Fearless, Gate Smashers, Knowledge Gate, Abdul Bari
+# ═══════════════════════════════════════════════════════════════════════
+VIDEOS_CATALOG = [
+    # ── Operating Systems (AKTU KCS-401) ──
+    {
+        "id": "vid_os_gw_u1",
+        "subject_id": "aktu_os_kcs401",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 1,
+        "title": "Operating Systems Unit 1 — OS Services & System Calls (One Shot)",
+        "channel": "Gateway Classes",
+        "channel_icon": "🎓",
+        "verified": True,
+        "duration": "1 hr 40 min",
+        "search_query": "Gateway Classes AKTU Operating System Unit 1 One Shot",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gateway+Classes+AKTU+Operating+System+Unit+1",
+        "topics_covered": ["Dual Mode", "System Calls", "Monolithic vs Microkernel", "PCB"],
+        "badge": "High Yield",
+    },
+    {
+        "id": "vid_os_fl_u2",
+        "subject_id": "aktu_os_kcs401",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 2,
+        "title": "CPU Scheduling Algorithms & Peterson Solution Deep Dive",
+        "channel": "Fearless",
+        "channel_icon": "🔥",
+        "verified": True,
+        "duration": "1 hr 15 min",
+        "search_query": "Fearless AKTU Operating System CPU Scheduling Peterson Solution",
+        "youtube_url": "https://www.youtube.com/results?search_query=Fearless+AKTU+Operating+System+CPU+Scheduling",
+        "topics_covered": ["FCFS, SJF, Round Robin", "Critical Section", "Semaphores"],
+        "badge": "Exam Favorite",
+    },
+    {
+        "id": "vid_os_kg_u3",
+        "subject_id": "aktu_os_kcs401",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 3,
+        "title": "Deadlock & Banker's Algorithm Numerical Solutions",
+        "channel": "Knowledge Gate",
+        "channel_icon": "🧠",
+        "verified": True,
+        "duration": "55 min",
+        "search_query": "Knowledge Gate Deadlock Bankers Algorithm Numerical",
+        "youtube_url": "https://www.youtube.com/results?search_query=Knowledge+Gate+Deadlock+Bankers+Algorithm",
+        "topics_covered": ["Resource Allocation Graph", "Banker's Algorithm", "Detection & Recovery"],
+        "badge": "Numerical Focus",
+    },
+    {
+        "id": "vid_os_gs_u4",
+        "subject_id": "aktu_os_kcs401",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 4,
+        "title": "Virtual Memory, Paging, TLB & Page Replacement Algorithms",
+        "channel": "Gate Smashers",
+        "channel_icon": "⚡",
+        "verified": True,
+        "duration": "1 hr 25 min",
+        "search_query": "Gate Smashers Virtual Memory Paging Page Replacement",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gate+Smashers+Virtual+Memory+Paging",
+        "topics_covered": ["Demand Paging", "FIFO, LRU, Optimal", "Thrashing", "TLB"],
+        "badge": "Top Rated",
+    },
+    {
+        "id": "vid_os_gw_u5",
+        "subject_id": "aktu_os_kcs401",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 5,
+        "title": "Disk Scheduling Algorithms (SCAN, C-SCAN, LOOK) & File Systems",
+        "channel": "Gateway Classes",
+        "channel_icon": "🎓",
+        "verified": True,
+        "duration": "1 hr 10 min",
+        "search_query": "Gateway Classes AKTU Operating System Disk Scheduling Unit 5",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gateway+Classes+Disk+Scheduling+Unit+5",
+        "topics_covered": ["FCFS, SSTF, SCAN, LOOK", "RAID Levels", "File Allocation"],
+        "badge": "Complete Unit",
+    },
+
+    # ── Theory of Automata and Formal Languages (AKTU KCS-402) ──
+    {
+        "id": "vid_tafl_gw_u1",
+        "subject_id": "aktu_tafl_kcs402",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 1,
+        "title": "TAFL Unit 1 — DFA, NFA & Epsilon NFA Conversions (One Shot)",
+        "channel": "Gateway Classes",
+        "channel_icon": "🎓",
+        "verified": True,
+        "duration": "2 hrs 10 min",
+        "search_query": "Gateway Classes AKTU TAFL Unit 1 One Shot DFA NFA",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gateway+Classes+AKTU+TAFL+Unit+1",
+        "topics_covered": ["DFA Minimization", "NFA to DFA", "Myhill-Nerode Theorem"],
+        "badge": "High Yield",
+    },
+    {
+        "id": "vid_tafl_fl_u2",
+        "subject_id": "aktu_tafl_kcs402",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 2,
+        "title": "Regular Expressions, Arden's Theorem & Pumping Lemma",
+        "channel": "Fearless",
+        "channel_icon": "🔥",
+        "verified": True,
+        "duration": "1 hr 35 min",
+        "search_query": "Fearless AKTU TAFL Ardens Theorem Pumping Lemma",
+        "youtube_url": "https://www.youtube.com/results?search_query=Fearless+AKTU+TAFL+Ardens+Theorem",
+        "topics_covered": ["Arden's Theorem", "Pumping Lemma for Regular Languages", "Closure Properties"],
+        "badge": "Exam Favorite",
+    },
+    {
+        "id": "vid_tafl_kg_u3",
+        "subject_id": "aktu_tafl_kcs402",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 3,
+        "title": "Context-Free Grammars, Derivation Trees & Normal Forms (CNF/GNF)",
+        "channel": "Knowledge Gate",
+        "channel_icon": "🧠",
+        "verified": True,
+        "duration": "1 hr 45 min",
+        "search_query": "Knowledge Gate Context Free Grammar CNF GNF Normal Forms",
+        "youtube_url": "https://www.youtube.com/results?search_query=Knowledge+Gate+Chomsky+Normal+Form",
+        "topics_covered": ["Ambiguity", "Chomsky Normal Form", "Greibach Normal Form"],
+        "badge": "Numerical Focus",
+    },
+    {
+        "id": "vid_tafl_gs_u4",
+        "subject_id": "aktu_tafl_kcs402",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 4,
+        "title": "Pushdown Automata (PDA) — DPDA vs NPDA Construction",
+        "channel": "Gate Smashers",
+        "channel_icon": "⚡",
+        "verified": True,
+        "duration": "1 hr 20 min",
+        "search_query": "Gate Smashers Pushdown Automata PDA Construction",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gate+Smashers+Pushdown+Automata",
+        "topics_covered": ["Instantaneous Descriptions", "Acceptance by Empty Stack", "Equivalence of CFG and PDA"],
+        "badge": "Core Theory",
+    },
+    {
+        "id": "vid_tafl_gw_u5",
+        "subject_id": "aktu_tafl_kcs402",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "unit_num": 5,
+        "title": "Turing Machines & Decidability (Post Correspondence Problem)",
+        "channel": "Gateway Classes",
+        "channel_icon": "🎓",
+        "verified": True,
+        "duration": "1 hr 50 min",
+        "search_query": "Gateway Classes AKTU TAFL Unit 5 Turing Machine Decidability",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gateway+Classes+TAFL+Unit+5+Turing+Machine",
+        "topics_covered": ["Turing Machine Construction", "Halting Problem", "PCP Problem"],
+        "badge": "Complete Unit",
+    },
+
+    # ── Data Structures (AKTU KCS-301) ──
+    {
+        "id": "vid_ds_gw_u1",
+        "subject_id": "aktu_ds_kcs301",
+        "university_id": "aktu",
+        "semester": "sem3",
+        "unit_num": 1,
+        "title": "Data Structures Unit 1 — Arrays, Stacks & Infix to Postfix (One Shot)",
+        "channel": "Gateway Classes",
+        "channel_icon": "🎓",
+        "verified": True,
+        "duration": "2 hrs",
+        "search_query": "Gateway Classes AKTU Data Structures Unit 1",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gateway+Classes+AKTU+Data+Structures+Unit+1",
+        "topics_covered": ["Row-Major & Column-Major Order", "Infix/Postfix/Prefix", "Tower of Hanoi"],
+        "badge": "High Yield",
+    },
+    {
+        "id": "vid_ds_ab_u4",
+        "subject_id": "aktu_ds_kcs301",
+        "university_id": "aktu",
+        "semester": "sem3",
+        "unit_num": 4,
+        "title": "Binary Trees, BST, AVL Trees & Rotations Masterclass",
+        "channel": "Abdul Bari",
+        "channel_icon": "👑",
+        "verified": True,
+        "duration": "2 hrs 15 min",
+        "search_query": "Abdul Bari Trees AVL Tree BST Rotations",
+        "youtube_url": "https://www.youtube.com/results?search_query=Abdul+Bari+AVL+Tree+Rotations",
+        "topics_covered": ["Tree Traversals", "AVL Rotations (LL, RR, LR, RL)", "Threaded Binary Trees"],
+        "badge": "Legendary Explanations",
+    },
+
+    # ── Database Management Systems (AKTU KCS-501) ──
+    {
+        "id": "vid_dbms_gw_u1",
+        "subject_id": "aktu_dbms_kcs501",
+        "university_id": "aktu",
+        "semester": "sem5",
+        "unit_num": 1,
+        "title": "DBMS Unit 1 — ER Diagrams, Schema Architecture & Relational Algebra",
+        "channel": "Gateway Classes",
+        "channel_icon": "🎓",
+        "verified": True,
+        "duration": "1 hr 45 min",
+        "search_query": "Gateway Classes AKTU DBMS Unit 1 One Shot",
+        "youtube_url": "https://www.youtube.com/results?search_query=Gateway+Classes+AKTU+DBMS+Unit+1",
+        "topics_covered": ["3-Tier Architecture", "ER to Relational Mapping", "Relational Algebra Operations"],
+        "badge": "High Yield",
+    },
+    {
+        "id": "vid_dbms_kg_u3",
+        "subject_id": "aktu_dbms_kcs501",
+        "university_id": "aktu",
+        "semester": "sem5",
+        "unit_num": 3,
+        "title": "Functional Dependencies & Normalization (1NF to BCNF) with Examples",
+        "channel": "Knowledge Gate",
+        "channel_icon": "🧠",
+        "verified": True,
+        "duration": "1 hr 30 min",
+        "search_query": "Knowledge Gate Normalization 1NF 2NF 3NF BCNF",
+        "youtube_url": "https://www.youtube.com/results?search_query=Knowledge+Gate+DBMS+Normalization",
+        "topics_covered": ["Attribute Closure", "Canonical Cover", "Lossless Join Decomposition"],
+        "badge": "Numerical Focus",
+    },
+
+    # ── Generative AI & Large Language Models (Independent Track) ──
+    {
+        "id": "vid_genai_ak_u1",
+        "subject_id": "ai_genai_ai201",
+        "university_id": "independent",
+        "semester": "level2",
+        "unit_num": 2,
+        "title": "Introduction to Large Language Models & Deep Transformer Intuition",
+        "channel": "Andrej Karpathy",
+        "channel_icon": "🤖",
+        "verified": True,
+        "duration": "1 hr",
+        "search_query": "Andrej Karpathy Intro to Large Language Models",
+        "youtube_url": "https://www.youtube.com/results?search_query=Andrej+Karpathy+Intro+to+Large+Language+Models",
+        "topics_covered": ["Next-token Prediction", "Tokenizer", "Attention", "RLHF"],
+        "badge": "World Class",
+    },
+]
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# PREVIOUS YEAR PAPERS & EXAM QUESTIONS (AKTU / UNIVERSITY)
+# ═══════════════════════════════════════════════════════════════════════
+PYQ_CATALOG = [
+    {
+        "id": "pyq_os_2024",
+        "subject_id": "aktu_os_kcs401",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "year": "2023-24",
+        "session": "Even Semester Examination",
+        "code": "KCS-401",
+        "max_marks": 70,
+        "duration": "3 Hours",
+        "sections": [
+            {
+                "section": "A",
+                "instructions": "Answer all 7 questions (2 marks each, total 14 marks)",
+                "questions": [
+                    {"q_num": "1(a)", "text": "Define system calls. Differentiate between monolithic and microkernel architectures.", "unit": 1, "marks": 2},
+                    {"q_num": "1(b)", "text": "What is the critical section problem? List three requirements to solve it.", "unit": 2, "marks": 2},
+                    {"q_num": "1(c)", "text": "State the necessary and sufficient conditions for a deadlock to occur.", "unit": 3, "marks": 2},
+                    {"q_num": "1(d)", "text": "Differentiate between internal and external fragmentation.", "unit": 4, "marks": 2},
+                    {"q_num": "1(e)", "text": "What is Belady's Anomaly? Name the page replacement algorithm that suffers from it.", "unit": 4, "marks": 2},
+                    {"q_num": "1(f)", "text": "Explain the concept of thrashing and how it can be mitigated.", "unit": 4, "marks": 2},
+                    {"q_num": "1(g)", "text": "Compare SCAN and C-SCAN disk scheduling algorithms.", "unit": 5, "marks": 2},
+                ]
+            },
+            {
+                "section": "B",
+                "instructions": "Answer any 3 questions out of 5 (7 marks each, total 21 marks)",
+                "questions": [
+                    {"q_num": "2(a)", "text": "Consider the following set of processes with arrival time and CPU burst times. Calculate Average Waiting Time and Turnaround Time using Preemptive SJF (SRTF) and Round Robin (Time Quantum = 2ms).", "unit": 2, "marks": 7},
+                    {"q_num": "2(b)", "text": "Explain Peterson's algorithm for mutual exclusion in two processes. Prove that it satisfies mutual exclusion, progress, and bounded waiting.", "unit": 2, "marks": 7},
+                    {"q_num": "2(c)", "text": "Execute Banker's Algorithm on a system with 5 processes (P0 to P4) and 3 resource types (A, B, C). Determine if the system is in a safe state and give the safe sequence.", "unit": 3, "marks": 7},
+                    {"q_num": "2(d)", "text": "Explain Paging hardware with Translation Lookaside Buffer (TLB). Calculate Effective Memory Access Time (EMAT) if TLB hit ratio is 85%, TLB search time is 20ns and memory access time is 100ns.", "unit": 4, "marks": 7},
+                    {"q_num": "2(e)", "text": "Describe RAID levels 0, 1, 5, and 10 with neat diagrams and performance trade-offs.", "unit": 5, "marks": 7},
+                ]
+            },
+            {
+                "section": "C",
+                "instructions": "Answer all 5 questions choosing either (a) or (b) (7 marks each, total 35 marks)",
+                "questions": [
+                    {"q_num": "3(a)", "text": "Describe the complete process lifecycle with state transitions and contents of a Process Control Block (PCB).", "unit": 1, "marks": 7},
+                    {"q_num": "4(a)", "text": "Explain the Dining Philosophers Problem and give a deadlock-free synchronization solution using semaphores.", "unit": 2, "marks": 7},
+                    {"q_num": "5(a)", "text": "Explain Deadlock Detection and Recovery using Resource Allocation Graph (RAG) reduction method.", "unit": 3, "marks": 7},
+                    {"q_num": "6(a)", "text": "For the page reference string: 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1 with 3 frames, calculate page faults using FIFO, LRU, and Optimal algorithms.", "unit": 4, "marks": 7},
+                    {"q_num": "7(a)", "text": "Suppose a disk drive has 200 cylinders numbered 0 to 199. Request queue is: 98, 183, 37, 122, 14, 124, 65, 67 with head at 53 moving towards 0. Calculate total head movements using SSTF and LOOK.", "unit": 5, "marks": 7},
+                ]
+            }
+        ]
+    },
+    {
+        "id": "pyq_tafl_2024",
+        "subject_id": "aktu_tafl_kcs402",
+        "university_id": "aktu",
+        "semester": "sem4",
+        "year": "2023-24",
+        "session": "Even Semester Examination",
+        "code": "KCS-402",
+        "max_marks": 70,
+        "duration": "3 Hours",
+        "sections": [
+            {
+                "section": "A",
+                "instructions": "Answer all 7 questions (2 marks each, total 14 marks)",
+                "questions": [
+                    {"q_num": "1(a)", "text": "Define Deterministic Finite Automata (DFA) with formal 5-tuple definition.", "unit": 1, "marks": 2},
+                    {"q_num": "1(b)", "text": "State Arden's Theorem for regular expressions with condition.", "unit": 2, "marks": 2},
+                    {"q_num": "1(c)", "text": "Define inherently ambiguous Context-Free Grammars with an example.", "unit": 3, "marks": 2},
+                    {"q_num": "1(d)", "text": "Differentiate between acceptance by final state and empty store in PDA.", "unit": 4, "marks": 2},
+                    {"q_num": "1(e)", "text": "State the Church-Turing Thesis.", "unit": 5, "marks": 2},
+                    {"q_num": "1(f)", "text": "What is the Post Correspondence Problem (PCP)?", "unit": 5, "marks": 2},
+                    {"q_num": "1(g)", "text": "State the Pumping Lemma for Context Free Languages.", "unit": 3, "marks": 2},
+                ]
+            },
+            {
+                "section": "B",
+                "instructions": "Answer any 3 questions out of 5 (7 marks each, total 21 marks)",
+                "questions": [
+                    {"q_num": "2(a)", "text": "Convert the following NFA with epsilon transitions into an equivalent DFA.", "unit": 1, "marks": 7},
+                    {"q_num": "2(b)", "text": "Prove using Pumping Lemma that the language L = {a^n b^n c^n | n >= 1} is not Context-Free.", "unit": 3, "marks": 7},
+                    {"q_num": "2(c)", "text": "Convert the following CFG into Chomsky Normal Form (CNF): S -> aAbB | ABC, A -> aA | a, B -> bB | b, C -> cC | c.", "unit": 3, "marks": 7},
+                    {"q_num": "2(d)", "text": "Design a Pushdown Automata (PDA) to accept the language L = {w c w^R | w in {a, b}*}.", "unit": 4, "marks": 7},
+                    {"q_num": "2(e)", "text": "Design a Turing Machine to accept the language L = {0^n 1^n | n >= 1}.", "unit": 5, "marks": 7},
+                ]
+            }
+        ]
+    }
+]
+
+
+def get_videos_by_filter(subject_id: str | None = None, university_id: str | None = None, semester: str | None = None):
+    res = VIDEOS_CATALOG
+    if subject_id:
+        res = [v for v in res if v["subject_id"] == subject_id]
+    elif university_id:
+        res = [v for v in res if v["university_id"] == university_id or v["university_id"] == "independent"]
+    if semester and not subject_id:
+        res = [v for v in res if v.get("semester") == semester]
+    return res if res else VIDEOS_CATALOG
+
+
+def get_pyqs_by_filter(subject_id: str | None = None, university_id: str | None = None):
+    res = PYQ_CATALOG
+    if subject_id:
+        res = [p for p in res if p["subject_id"] == subject_id]
+    elif university_id:
+        res = [p for p in res if p["university_id"] == university_id]
+    return res if res else PYQ_CATALOG

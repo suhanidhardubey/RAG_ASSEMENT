@@ -364,5 +364,169 @@ def get_weekly_study_tracker(user_id: int):
     return result
 
 
+# ── Bookmarks ──
+def get_bookmarks(user_id: int, item_type: str | None = None):
+    conn = get_db()
+    if item_type:
+        rows = conn.execute("SELECT * FROM bookmarks WHERE user_id = ? AND item_type = ? ORDER BY id DESC", (user_id, item_type)).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM bookmarks WHERE user_id = ? ORDER BY id DESC", (user_id,)).fetchall()
+    conn.close()
+    result = []
+    for r in rows:
+        d = dict(r)
+        if d.get("metadata_json"):
+            try:
+                d["metadata"] = json.loads(d["metadata_json"])
+            except Exception:
+                d["metadata"] = {}
+        result.append(d)
+    return result
+
+
+def add_bookmark(user_id: int, item_type: str, item_id: str, title: str, subtitle: str = "", metadata: dict = None):
+    conn = get_db()
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    meta_str = json.dumps(metadata or {})
+    try:
+        cursor.execute("""
+            INSERT OR REPLACE INTO bookmarks (user_id, item_type, item_id, title, subtitle, metadata_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (user_id, item_type, item_id, title, subtitle, meta_str, now_str))
+        conn.commit()
+        return True
+    finally:
+        conn.close()
+
+
+def remove_bookmark(user_id: int, item_type: str, item_id: str):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM bookmarks WHERE user_id = ? AND item_type = ? AND item_id = ?", (user_id, item_type, item_id))
+    conn.commit()
+    conn.close()
+    return True
+
+
+# ── Study Planner ──
+def get_planner_tasks(user_id: int):
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM study_planner WHERE user_id = ? ORDER BY completed ASC, target_date ASC", (user_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def add_planner_task(user_id: int, subject_id: str, title: str, target_date: str, priority: str = "Medium"):
+    conn = get_db()
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    cursor.execute("""
+        INSERT INTO study_planner (user_id, subject_id, title, target_date, priority, completed, created_at)
+        VALUES (?, ?, ?, ?, ?, 0, ?)
+    """, (user_id, subject_id, title, target_date, priority, now_str))
+    task_id = cursor.lastrowid
+    conn.commit()
+    row = conn.execute("SELECT * FROM study_planner WHERE id = ?", (task_id,)).fetchone()
+    conn.close()
+    return dict(row)
+
+
+def update_planner_task(task_id: int, user_id: int, completed: int = None, title: str = None, priority: str = None, target_date: str = None):
+    conn = get_db()
+    cursor = conn.cursor()
+    updates = []
+    params = []
+    if completed is not None:
+        updates.append("completed = ?")
+        params.append(1 if completed else 0)
+    if title is not None:
+        updates.append("title = ?")
+        params.append(title)
+    if priority is not None:
+        updates.append("priority = ?")
+        params.append(priority)
+    if target_date is not None:
+        updates.append("target_date = ?")
+        params.append(target_date)
+
+    if updates:
+        params.extend([task_id, user_id])
+        cursor.execute(f"UPDATE study_planner SET {', '.join(updates)} WHERE id = ? AND user_id = ?", params)
+        conn.commit()
+    row = conn.execute("SELECT * FROM study_planner WHERE id = ?", (task_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def delete_planner_task(task_id: int, user_id: int):
+    conn = get_db()
+    conn.execute("DELETE FROM study_planner WHERE id = ? AND user_id = ?", (task_id, user_id))
+    conn.commit()
+    conn.close()
+    return True
+
+
+# ── Game Scores ──
+def save_game_score(user_id: int, game_type: str, score: int, stars: int = 0, time_seconds: int = 0, xp_earned: int = 15):
+    conn = get_db()
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    cursor.execute("""
+        INSERT INTO game_scores (user_id, game_type, score, stars, time_seconds, xp_earned, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, game_type, score, stars, time_seconds, xp_earned, now_str))
+    conn.commit()
+    conn.close()
+    add_user_xp(user_id, xp_earned, f"Played {game_type.replace('_', ' ').title()} (+{xp_earned} XP)", "game")
+    return {"status": "ok", "xp_earned": xp_earned}
+
+
+def get_game_history(user_id: int, limit: int = 10):
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM game_scores WHERE user_id = ? ORDER BY id DESC LIMIT ?", (user_id, limit)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# ── Revision Reminders ──
+def get_revision_reminders(user_id: int):
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM revision_reminders WHERE user_id = ? ORDER BY is_completed ASC, next_review_date ASC", (user_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def add_revision_reminder(user_id: int, subject_id: str, topic_title: str, interval_days: int = 1):
+    conn = get_db()
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    next_date = (date.today() + timedelta(days=interval_days)).isoformat()
+    cursor.execute("""
+        INSERT INTO revision_reminders (user_id, subject_id, topic_title, interval_days, next_review_date, is_completed, created_at)
+        VALUES (?, ?, ?, ?, ?, 0, ?)
+    """, (user_id, subject_id, topic_title, interval_days, next_date, now_str))
+    conn.commit()
+    conn.close()
+    return True
+
+
+def toggle_revision_reminder(reminder_id: int, user_id: int):
+    conn = get_db()
+    cursor = conn.cursor()
+    curr = conn.execute("SELECT is_completed, interval_days FROM revision_reminders WHERE id = ? AND user_id = ?", (reminder_id, user_id)).fetchone()
+    if curr:
+        new_val = 0 if curr["is_completed"] else 1
+        if new_val == 1:
+            new_interval = max(1, curr["interval_days"]) * 2
+            next_date = (date.today() + timedelta(days=new_interval)).isoformat()
+            cursor.execute("UPDATE revision_reminders SET is_completed = 1, interval_days = ?, next_review_date = ? WHERE id = ?", (new_interval, next_date, reminder_id))
+        else:
+            cursor.execute("UPDATE revision_reminders SET is_completed = 0 WHERE id = ?", (reminder_id,))
+        conn.commit()
+    conn.close()
+    return True
+
+
 # Initialize tables when module is imported
 init_db()

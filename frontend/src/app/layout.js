@@ -20,15 +20,29 @@ import {
   Sparkles,
   Flame,
   ChevronRight,
+  GraduationCap,
+  Video,
+  Gamepad2,
+  Calendar,
+  Bookmark,
+  FileText,
 } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Welcome", icon: Home },
-  { href: "/upload", label: "Upload & Study", icon: Upload },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/summary", label: "Summary & Keywords", icon: BookOpen },
+  { href: "/curriculum", label: "University & Track", icon: GraduationCap },
+  { href: "/subjects", label: "Academic Subjects", icon: BookOpen },
+  { href: "/videos", label: "Video Lectures", icon: Video },
+  { href: "/games", label: "Gaming Zone", icon: Gamepad2, badge: "XP" },
+  { href: "/ask", label: "Ask AI Tutor", icon: Sparkles },
+  { href: "/upload", label: "Upload & Extract", icon: Upload },
+  { href: "/summary", label: "Summary & Terms", icon: FileText },
   { href: "/flashcards", label: "3D Flashcards", icon: Layers },
   { href: "/quiz", label: "Quiz & Analytics", icon: Brain, badge: "Test" },
+  { href: "/planner", label: "Study Planner", icon: Calendar },
+  { href: "/pyq", label: "PYQ Papers", icon: BookOpen },
+  { href: "/bookmarks", label: "Bookmarks", icon: Bookmark },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy, badge: "Rank" },
   { href: "/profile", label: "My Profile", icon: User },
 ];
@@ -113,7 +127,7 @@ export default function RootLayout({ children }) {
             </div>
 
             {/* Navigation Links */}
-            <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-230px)]">
+            <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-165px)]">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;

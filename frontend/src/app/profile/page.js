@@ -489,6 +489,27 @@ export default function ProfilePage() {
         })}
       </div>
 
+      {/* Academic Track Configuration Banner */}
+      <div className="bg-[#FFF5F8] p-5 rounded-3xl border border-[#FFD6E7] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[10px] font-bold text-[#880E4F] uppercase tracking-wider">
+            Academic Track & Enrolled Curriculum
+          </p>
+          <h4 className="font-extrabold text-sm text-[#4A1525]">
+            {user.university?.toUpperCase() || "AKTU"} • {user.course || "B.Tech"} ({user.branch || "CSDS"}) • {user.semester || "Semester 4"}
+          </h4>
+          <p className="text-[11px] text-[#880E4F]/70 font-medium">
+            Modular syllabus configured with 5-unit subject breakdowns and exam questions.
+          </p>
+        </div>
+        <Link
+          href="/curriculum"
+          className="px-4 py-2 rounded-xl bg-white hover:bg-[#FFD6E7] text-[#F06292] font-bold text-xs border border-[#FFC1D9] shadow-2xs shrink-0 transition-all"
+        >
+          Change Track / University →
+        </Link>
+      </div>
+
       {/* Real Activity Timeline (From SQLite) */}
       <div className="glass-card p-5 space-y-3">
         <h3 className="font-extrabold text-sm text-[#4A1525] flex items-center gap-2">
