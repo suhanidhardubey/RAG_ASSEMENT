@@ -34,6 +34,10 @@ def init_db():
             college TEXT DEFAULT 'GL Bajaj Institute of Technology',
             branch TEXT DEFAULT 'Computer Science (CSDS)',
             group_name TEXT DEFAULT 'Group 1',
+            university TEXT DEFAULT 'aktu',
+            course TEXT DEFAULT 'B.Tech',
+            semester TEXT DEFAULT 'sem4',
+            selected_subjects TEXT DEFAULT '[]',
             avatar TEXT DEFAULT 'https://api.dicebear.com/7.x/adventurer/svg?seed=Student&backgroundColor=ffd6e7',
             xp INTEGER DEFAULT 0,
             streak INTEGER DEFAULT 1,
@@ -41,6 +45,19 @@ def init_db():
             created_at TEXT NOT NULL
         )
     """)
+
+    # Safe column migrations for existing SQLite databases
+    user_columns = [
+        ("university", "TEXT DEFAULT 'aktu'"),
+        ("course", "TEXT DEFAULT 'B.Tech'"),
+        ("semester", "TEXT DEFAULT 'sem4'"),
+        ("selected_subjects", "TEXT DEFAULT '[]'"),
+    ]
+    for col_name, col_def in user_columns:
+        try:
+            cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_def}")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
 
     # 2. Documents Table
     cursor.execute("""
@@ -104,6 +121,67 @@ def init_db():
             status TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             UNIQUE(user_id, doc_id, card_id),
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    """)
+
+    # 6. Bookmarks Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS bookmarks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            item_type TEXT NOT NULL,
+            item_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            subtitle TEXT,
+            metadata_json TEXT,
+            created_at TEXT NOT NULL,
+            UNIQUE(user_id, item_type, item_id),
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    """)
+
+    # 7. Study Planner Tasks
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS study_planner (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject_id TEXT,
+            title TEXT NOT NULL,
+            target_date TEXT NOT NULL,
+            priority TEXT DEFAULT 'Medium',
+            completed INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    """)
+
+    # 8. Game Scores & History
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS game_scores (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            game_type TEXT NOT NULL,
+            score INTEGER NOT NULL,
+            stars INTEGER DEFAULT 0,
+            time_seconds INTEGER DEFAULT 0,
+            xp_earned INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    """)
+
+    # 9. Revision Reminders
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS revision_reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject_id TEXT,
+            topic_title TEXT NOT NULL,
+            interval_days INTEGER DEFAULT 1,
+            next_review_date TEXT NOT NULL,
+            is_completed INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
     """)

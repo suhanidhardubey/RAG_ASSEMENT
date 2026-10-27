@@ -27,11 +27,10 @@ if %errorlevel% neq 0 (
 
 echo [1/2] Installing Backend Dependencies (Python)...
 cd /d "%~dp0backend"
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install --break-system-packages -r requirements.txt --find-links wheels 2>nul || python -m pip install -r requirements.txt --find-links wheels 2>nul || python -m pip install --break-system-packages -r requirements.txt || python -m pip install -r requirements.txt
 if %errorlevel% neq 0 (
-    echo [WARNING] Some python packages encountered an issue. Retrying with basic set...
-    python -m pip install fastapi uvicorn python-multipart PyPDF2 python-pptx markdown
+    echo [WARNING] Retrying with basic set...
+    python -m pip install --break-system-packages fastapi uvicorn python-multipart PyPDF2 python-pptx markdown 2>nul || python -m pip install fastapi uvicorn python-multipart PyPDF2 python-pptx markdown
 )
 echo [OK] Backend setup complete!
 echo.
