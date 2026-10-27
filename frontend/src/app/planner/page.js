@@ -25,9 +25,13 @@ export default function StudyPlannerPage() {
   // New task form state
   const [title, setTitle] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
-  const [targetDate, setTargetDate] = useState(new Date().toISOString().split("T")[0]);
+  const [targetDate, setTargetDate] = useState("");
   const [priority, setPriority] = useState("Medium");
   const [toastMsg, setToastMsg] = useState("");
+
+  useEffect(() => {
+    setTargetDate(new Date().toISOString().split("T")[0]);
+  }, []);
 
   const showToast = (msg) => {
     setToastMsg(msg);

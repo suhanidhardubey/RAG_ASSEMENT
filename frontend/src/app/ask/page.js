@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
@@ -20,7 +20,7 @@ import {
   Key,
 } from "lucide-react";
 
-export default function AskRAGPage() {
+function AskRAGContent() {
   const searchParams = useSearchParams();
   const initialTopic = searchParams.get("topic") || "";
   const initialSubject = searchParams.get("subject_id") || "";
@@ -343,3 +343,18 @@ export default function AskRAGPage() {
     </div>
   );
 }
+
+export default function AskRAGPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-sm font-semibold text-[#8B4B62]">
+          Loading AI assistant...
+        </div>
+      }
+    >
+      <AskRAGContent />
+    </Suspense>
+  );
+}
+

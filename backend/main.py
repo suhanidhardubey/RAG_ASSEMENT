@@ -59,6 +59,9 @@ from syllabi import (
     get_pyqs_by_filter,
 )
 
+# ── LLM Integration Layer ──
+from llm import query_llm, is_llm_configured
+
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -1039,12 +1042,31 @@ async def rag_ask_question(payload: dict):
         + f"\n\n**Exam High-Yield Takeaway**: Always define the basic formula or diagram first, state assumptions clearly, and outline step-by-step algorithms."
     )
 
+    llm_key = payload.get("api_key")
+    llm_provider = payload.get("provider")
+    llm_model = payload.get("model")
+    llm_used = False
+
+    if is_llm_configured() or llm_key:
+        prompt = (
+            f"You are an academic exam tutor for engineering students.\n"
+            f"The user asked: {question}\n\n"
+            f"Context from course materials ({source_label}):\n"
+            + "\n".join(f"- {c}" for c in cited_snippets)
+            + "\n\nSynthesize a clear, exam-oriented response using bullet points, core concepts, and key takeaways."
+        )
+        llm_res = query_llm(prompt, provider=llm_provider, api_key=llm_key, model=llm_model)
+        if llm_res.get("success") and llm_res.get("text"):
+            synthesized_answer = llm_res["text"]
+            llm_used = True
+
     return {
         "question": question,
         "answer": synthesized_answer,
         "source": source_label,
         "citations": cited_snippets,
         "confidence": 0.94 if any(s[0] > 0 for s in chunk_scores) else 0.72,
+        "llm_used": llm_used,
     }
 
 
@@ -1069,6 +1091,28 @@ async def ai_explain_topic(payload: dict):
         "exam_tip": f"In semester exams, questions on {topic} typically carry 7 to 10 marks in Section B or C. Draw a neat diagram or transition table for maximum credit.",
         "common_pitfalls": "Skipping boundary conditions or forgetting time/space complexity analysis."
     }
+
+
+@app.get("/api/llm/status")
+async def llm_status():
+    return {
+        "configured": is_llm_configured(),
+        "has_gemini": bool(os.environ.get("GEMINI_API_KEY")),
+        "has_openai": bool(os.environ.get("OPENAI_API_KEY")),
+        "has_groq": bool(os.environ.get("GROQ_API_KEY")),
+    }
+
+
+@app.post("/api/llm/generate")
+async def llm_generate(payload: dict):
+    prompt = payload.get("prompt", "").strip()
+    if not prompt:
+        raise HTTPException(400, "Prompt is required")
+    provider = payload.get("provider")
+    api_key = payload.get("api_key")
+    model = payload.get("model")
+    return query_llm(prompt, provider=provider, api_key=api_key, model=model)
+
 
 
 # ═══════════════════════════════════════════════════════════════════════
