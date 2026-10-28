@@ -60,10 +60,10 @@ function ShellInner({ children }) {
   const [copied, setCopied] = useState(false);
 
   const getShareUrl = () => {
-    if (typeof window === "undefined") return "https://mating-taylor-fate-sara.trycloudflare.com";
+    if (typeof window === "undefined") return "https://frontend-weld-seven-11.vercel.app";
     const host = window.location.hostname;
     if (host === "localhost" || host === "127.0.0.1") {
-      return "https://mating-taylor-fate-sara.trycloudflare.com";
+      return "https://frontend-weld-seven-11.vercel.app";
     }
     return window.location.origin;
   };
