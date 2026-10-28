@@ -33,7 +33,7 @@ def load_local_env():
                         k, v = line.split("=", 1)
                         k = k.strip()
                         v = v.strip().strip("'\"")
-                        if k and not os.environ.get(k):
+                        if k and v:
                             os.environ[k] = v
             except Exception:
                 pass
@@ -41,41 +41,52 @@ def load_local_env():
 load_local_env()
 
 
-def call_gemini(prompt: str, api_key: str = None, model: str = "gemini-1.5-flash") -> str:
-    key = api_key or os.environ.get("GEMINI_API_KEY")
+def call_gemini(prompt: str, api_key: str = None, model: str = "gemini-3-flash-preview") -> str:
+    key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not key:
-        raise ValueError("No Gemini API key provided. Set GEMINI_API_KEY or enter your key in Settings.")
+        raise ValueError("No Gemini API key provided. Add GEMINI_API_KEY to backend/.env or enter your key in the web UI.")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": prompt}
-                ]
+    models_to_try = [model, "gemini-3-flash-preview", "gemini-3.1-flash-lite-preview", "gemini-3.8-flash", "gemini-flash-latest"]
+    seen = set()
+    ordered_models = [m for m in models_to_try if not (m in seen or seen.add(m))]
+
+    last_error = None
+    for m in ordered_models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={key}"
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": prompt}
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.4,
+                "maxOutputTokens": 1024
             }
-        ],
-        "generationConfig": {
-            "temperature": 0.3,
-            "maxOutputTokens": 1024
         }
-    }
 
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST"
-    )
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
 
-    with urllib.request.urlopen(req, timeout=18) as response:
-        res_data = json.loads(response.read().decode("utf-8"))
-        candidates = res_data.get("candidates", [])
-        if candidates and "content" in candidates[0]:
-            parts = candidates[0]["content"].get("parts", [])
-            if parts:
-                return parts[0].get("text", "").strip()
-        raise ValueError("Empty response from Gemini API.")
+        try:
+            with urllib.request.urlopen(req, timeout=18) as response:
+                res_data = json.loads(response.read().decode("utf-8"))
+                candidates = res_data.get("candidates", [])
+                if candidates and "content" in candidates[0]:
+                    parts = candidates[0]["content"].get("parts", [])
+                    if parts:
+                        return parts[0].get("text", "").strip()
+        except Exception as e:
+            last_error = e
+            continue
+
+    raise ValueError(f"Gemini API request failed: {last_error or 'Empty response'}")
 
 
 def call_openai(prompt: str, api_key: str = None, model: str = "gpt-4o-mini") -> str:
@@ -192,7 +203,7 @@ def query_llm(
     # Determine provider priority if not specified
     if not prov:
         if api_key:
-            prov = "gemini" if api_key.startswith("AIza") else "openai"
+            prov = "gemini" if (api_key.startswith("AIza") or api_key.startswith("AQ.")) else "openai"
         elif os.environ.get("GEMINI_API_KEY"):
             prov = "gemini"
         elif os.environ.get("OPENAI_API_KEY"):
@@ -209,7 +220,7 @@ def query_llm(
 
     try:
         if prov == "gemini":
-            chosen_model = model or "gemini-1.5-flash"
+            chosen_model = model or "gemini-3-flash-preview"
             text = call_gemini(prompt, api_key=api_key, model=chosen_model)
             return {"success": True, "text": text, "provider": "gemini", "model": chosen_model}
 
@@ -239,6 +250,7 @@ def is_llm_configured() -> bool:
     """Returns True if any environment API key is present."""
     return bool(
         os.environ.get("GEMINI_API_KEY")
+        or os.environ.get("GOOGLE_API_KEY")
         or os.environ.get("OPENAI_API_KEY")
         or os.environ.get("GROQ_API_KEY")
     )

@@ -5,12 +5,13 @@ Stores real users, uploaded documents, quiz history, flashcard progress, and act
 
 import sqlite3
 import json
-import hashlib
+import os
 from datetime import datetime, date, timedelta
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent / "data" / "rag_assistant.db"
+DB_PATH = Path(os.environ.get("DATABASE_PATH", str(Path(__file__).resolve().parent / "data" / "rag_assistant.db")))
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+
 
 
 def get_db():

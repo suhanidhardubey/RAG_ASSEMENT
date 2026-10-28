@@ -79,7 +79,7 @@ STOP_WORDS = set(
     ).split()
 )
 
-app = FastAPI(title="RAG Study Companion Backend", version="2.0.0")
+app = FastAPI(title="RAGora Study Agora Backend", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -1078,10 +1078,31 @@ async def ai_explain_topic(payload: dict):
     if not topic:
         raise HTTPException(400, "Topic is required")
 
+    llm_key = payload.get("api_key")
+    llm_provider = payload.get("provider")
+    llm_model = payload.get("model")
+
+    overview = f"**{topic}** is a foundational concept in **{subject_name}**. It plays a critical role in system efficiency and exam evaluations."
+    llm_used = False
+
+    if is_llm_configured() or llm_key:
+        prompt = (
+            f"You are an expert engineering university tutor for the subject '{subject_name}'.\n"
+            f"Provide a clear, high-yield explanation of the topic: '{topic}'.\n"
+            f"Structure your response with:\n"
+            f"1. Concise technical definition.\n"
+            f"2. Core principles or algorithm steps.\n"
+            f"3. Key exam takeaway."
+        )
+        res = query_llm(prompt, provider=llm_provider, api_key=llm_key, model=llm_model)
+        if res.get("success") and res.get("text"):
+            overview = res["text"]
+            llm_used = True
+
     return {
         "topic": topic,
         "subject": subject_name,
-        "overview": f"**{topic}** is a foundational concept in **{subject_name}**. It plays a critical role in system efficiency and exam evaluations.",
+        "overview": overview,
         "key_principles": [
             f"Formal definition and core mechanism of {topic}.",
             "Comparison with standard alternative approaches and trade-offs.",
@@ -1089,7 +1110,8 @@ async def ai_explain_topic(payload: dict):
             "Real-world engineering applications in production architectures."
         ],
         "exam_tip": f"In semester exams, questions on {topic} typically carry 7 to 10 marks in Section B or C. Draw a neat diagram or transition table for maximum credit.",
-        "common_pitfalls": "Skipping boundary conditions or forgetting time/space complexity analysis."
+        "common_pitfalls": "Skipping boundary conditions or forgetting time/space complexity analysis.",
+        "llm_used": llm_used,
     }
 
 

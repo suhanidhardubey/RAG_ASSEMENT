@@ -80,9 +80,14 @@ export default function SubjectDetailPage() {
 
     setExplainingLoading(true);
     try {
+      const savedKey = typeof window !== "undefined" ? localStorage.getItem("rag_llm_api_key") : null;
+      const savedProv = typeof window !== "undefined" ? localStorage.getItem("rag_llm_provider") || "gemini" : "gemini";
+
       const res = await api.post("/api/ai/explain", {
         topic: topic,
         subject_name: subject?.name || "Subject",
+        api_key: savedKey || undefined,
+        provider: savedProv || undefined,
       });
       setTopicExplanations((prev) => ({ ...prev, [topic]: res.data }));
     } catch (err) {

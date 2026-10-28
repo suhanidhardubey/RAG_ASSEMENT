@@ -1,9 +1,9 @@
 @echo off
-title RAG Assistant - Study Companion
+title RAGora - Study Agora & Companion
 color 0D
 
 echo ===================================================
-echo     Launching RAG Assistant Study Companion...
+echo     Launching RAGora Study Agora & Companion...
 echo ===================================================
 echo.
 
@@ -48,6 +48,9 @@ echo.
 echo   - Web App UI:        http://localhost:3000
 echo   - Backend Swagger:   http://127.0.0.1:8000/docs
 echo   - Health Check:      http://127.0.0.1:8000/api/health
+echo.
+echo   Want a live public link for anyone on the internet?
+echo   Double-click START_PUBLIC.BAT anytime!
 echo.
 echo   To stop the servers, simply close the backend and 
 echo   frontend terminal windows.

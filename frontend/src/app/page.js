@@ -121,15 +121,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#4A1525] tracking-tight mb-2">
-            RAG Assistant
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-[#4A1525] tracking-tight mb-2">
+            RAGora
           </h1>
           <p className="text-base sm:text-lg font-bold text-[#880E4F] max-w-md leading-relaxed mb-3">
-            Your Personal AI-Powered Study Companion
+            Next-Gen AI Study Agora & Intelligent Companion
           </p>
 
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/80 backdrop-blur-sm border border-white text-xs font-bold text-[#C2185B] shadow-sm mb-8">
-            <span>📚</span> Document Extraction • Flashcards • Timed Quizzes • Leaderboard
+            <span>✨</span> Gemini AI • Document RAG • 3D Flashcards • Timed Quizzes • Leaderboard
           </div>
 
           {/* Bottom Action */}
@@ -138,11 +138,11 @@ export default function HomePage() {
               href="/upload"
               className="w-full py-4 px-6 rounded-2xl bg-white text-[#F06292] hover:text-[#E91E63] font-extrabold text-base shadow-lg hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
             >
-              <span>Get Started</span>
+              <span>Explore RAGora</span>
               <ArrowRight className="w-5 h-5 text-[#F06292] group-hover:translate-x-1 transition-transform" />
             </Link>
             <p className="text-center text-[11px] text-[#880E4F]/70 font-bold">
-              100% Local & Real • Persistent SQLite Database
+              Powered by Google Gemini & Local TF-IDF • SQLite Persistence
             </p>
           </div>
         </div>
@@ -152,10 +152,10 @@ export default function HomePage() {
       <section className="max-w-5xl mx-auto px-6 space-y-6">
         <div className="text-center space-y-1">
           <h2 className="text-xl sm:text-2xl font-extrabold text-[#4A1525]">
-            Complete Study Companion Architecture
+            Complete RAGora Study Architecture
           </h2>
           <p className="text-xs text-[#880E4F]/70 font-semibold">
-            All document intelligence and study modules fully functional and connected to local database
+            Grounded AI intelligence, syllabus explorer, 3D memory tools, and real-time student gamification
           </p>
         </div>
 

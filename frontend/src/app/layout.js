@@ -2,9 +2,9 @@ import "./globals.css";
 import ClientShell from "@/components/ClientShell";
 
 export const metadata = {
-  title: "RAG Assistant — Study Companion",
+  title: "RAGora — Next-Gen AI Study Agora & Companion",
   description:
-    "Local AI-powered Study Companion with Document Processing, Flashcards, Quiz Modules, and Leaderboard.",
+    "RAGora: AI Study Agora with Document RAG, Gemini AI, 3D Flashcards, Timed Quizzes, and Live Leaderboard.",
 };
 
 export default function RootLayout({ children }) {

@@ -68,10 +68,15 @@ function AskRAGContent() {
     setLoading(true);
 
     try {
+      const savedKey = typeof window !== "undefined" ? localStorage.getItem("rag_llm_api_key") : null;
+      const savedProv = typeof window !== "undefined" ? localStorage.getItem("rag_llm_provider") || "gemini" : "gemini";
+
       const res = await api.post("/api/rag/ask", {
         question: q,
         doc_id: selectedDocId || undefined,
         subject_id: selectedSubjectId || undefined,
+        api_key: savedKey || undefined,
+        provider: savedProv || undefined,
       });
 
       const botMessage = {

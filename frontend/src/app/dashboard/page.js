@@ -154,7 +154,7 @@ export default function DashboardPage() {
             </Link>
             <div>
               <p className="text-xs font-semibold text-[#880E4F]">
-                {user ? "Welcome back," : "Study Companion Dashboard"}
+                {user ? "Welcome back," : "RAGora Student Dashboard"}
               </p>
               <h1 className="text-base font-extrabold text-[#4A1525]">
                 {user ? `${user.name} 👋` : "Guest Student 👋"}

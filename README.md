@@ -1,8 +1,8 @@
-# RAG Assistant — Study Companion
+# RAGora — Next-Gen AI Study Agora & Companion
 
-> **AI-Powered Study Companion Web Application** with live Document Processing, SQLite Database persistence, interactive 3D Flashcards, timed MCQ Quizzes with circular meters, real score tracking, and live Leaderboard rankings.
+> **RAGora** is an AI-Powered Study Agora and Learning Platform with live Google Gemini intelligence, Document RAG Extraction, SQLite Database persistence, interactive 3D Flashcards, timed MCQ Quizzes with circular meters, real XP progression, and live Leaderboard rankings.
 
-![Tech Stack](https://img.shields.io/badge/Next.js%2015-Frontend-black) ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green) ![SQLite](https://img.shields.io/badge/SQLite-Database-blue) ![Tailwind](https://img.shields.io/badge/TailwindCSS-Styling-pink)
+![Tech Stack](https://img.shields.io/badge/Next.js%2016-Frontend-black) ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green) ![Gemini%20AI](https://img.shields.io/badge/Gemini-AI%20Engine-blue) ![SQLite](https://img.shields.io/badge/SQLite-Database-purple) ![Tailwind](https://img.shields.io/badge/TailwindCSS-Styling-pink)
 
 ---
 
@@ -54,14 +54,15 @@ RAG_ASSEMENT/
 
 ### 1-Click Windows Launch (Recommended)
 1. Double-click `SETUP.BAT` (only needed once to install Python and npm packages).
-2. Double-click `START.BAT` (launches FastAPI backend on port 8000, Next.js frontend on port 3000, and opens http://localhost:3000 in your browser).
+2. Double-click `START.BAT` (launches local app at http://localhost:3000).
+3. **Double-click `START_PUBLIC.BAT`** (launches local app AND creates a live public HTTPS link via Cloudflare Tunnel so anyone in the world can open your app on their phone or laptop).
 
 ### Manual Terminal Run
 
 #### Backend:
 ```bash
 cd backend
-python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 - API Docs: **http://127.0.0.1:8000/docs**
 - Health Check: **http://127.0.0.1:8000/api/health**
@@ -72,3 +73,23 @@ cd frontend
 npm run dev
 ```
 - Web Application: **http://localhost:3000**
+
+---
+
+## 🌐 Making Your App Public Permanently (Cloud Hosting)
+
+### Option 1: Live Instant Tunnel (Included & Active)
+Run `START_PUBLIC.BAT` to instantly get a free, secure HTTPS URL (e.g. `https://xxxx.trycloudflare.com`) accessible worldwide with zero configuration.
+
+### Option 2: Deploy to Vercel + Render / Railway
+1. **Backend (Render / Railway / Hugging Face Spaces)**:
+   - Connect your GitHub repo.
+   - Root directory: `backend`
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+2. **Frontend (Vercel)**:
+   - Connect your GitHub repo.
+   - Root directory: `frontend`
+   - Add Environment Variable: `NEXT_PUBLIC_API_URL=https://your-backend.onrender.com`
+   - Hit Deploy!
+
