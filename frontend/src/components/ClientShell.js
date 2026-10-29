@@ -28,6 +28,7 @@ import {
   Check,
   ExternalLink,
   MessageCircle,
+  MessageSquare,
   X,
   Globe,
   Smartphone,
@@ -36,11 +37,12 @@ import {
 const navItems = [
   { href: "/", label: "Welcome", icon: Home },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/history", label: "Chat History", icon: MessageSquare, badge: "History" },
+  { href: "/ask", label: "Ask AI Tutor", icon: Sparkles },
   { href: "/curriculum", label: "University & Track", icon: GraduationCap },
   { href: "/subjects", label: "Academic Subjects", icon: BookOpen },
   { href: "/videos", label: "Video Lectures", icon: Video },
   { href: "/games", label: "Gaming Zone", icon: Gamepad2, badge: "XP" },
-  { href: "/ask", label: "Ask AI Tutor", icon: Sparkles },
   { href: "/upload", label: "Upload & Extract", icon: Upload },
   { href: "/summary", label: "Summary & Terms", icon: FileText },
   { href: "/flashcards", label: "3D Flashcards", icon: Layers },
@@ -60,17 +62,17 @@ function ShellInner({ children }) {
   const [copied, setCopied] = useState(false);
 
   const getShareUrl = () => {
-    if (typeof window === "undefined") return "https://frontend-weld-seven-11.vercel.app";
+    if (typeof window === "undefined") return "https://ragora-app.vercel.app";
     const host = window.location.hostname;
     if (host === "localhost" || host === "127.0.0.1") {
-      return "https://frontend-weld-seven-11.vercel.app";
+      return "https://ragora-app.vercel.app";
     }
     return window.location.origin;
   };
 
   const handleWhatsAppShare = () => {
     const url = getShareUrl();
-    const text = `🌸 *RIVora* — AI Study Agora & Exam Companion with Gemini AI!\n\nAccess 3D Flashcards, Syllabus Intelligence, Timed Quizzes, and Live AI Tutoring.\n\n🔗 Open directly here:\n${url}`;
+    const text = `🌸 *RAGora* — AI Study Agora & Exam Companion with Gemini AI!\n\nAccess 3D Flashcards, Syllabus Intelligence, Timed Quizzes, and Live AI Tutoring.\n\n🔗 Open directly here:\n${url}`;
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     window.open(waUrl, "_blank");
   };
@@ -88,8 +90,8 @@ function ShellInner({ children }) {
     const url = getShareUrl();
     if (navigator.share) {
       navigator.share({
-        title: "RIVora - AI Study Agora & Exam Companion",
-        text: "Study smarter with RIVora: Gemini AI, 3D Flashcards, Quizzes & Syllabus intelligence!",
+        title: "RAGora - AI Study Agora & Exam Companion",
+        text: "Study smarter with RAGora: Gemini AI, 3D Flashcards, Quizzes & Syllabus intelligence!",
         url: url,
       }).catch(() => {});
     } else {
@@ -157,7 +159,7 @@ function ShellInner({ children }) {
               <div>
                 <div className="flex items-center gap-1.5">
                   <h1 className="font-extrabold text-base text-[#4A1525] tracking-tight">
-                    RIVora
+                    RAGora
                   </h1>
                   <span className="text-[10px] bg-[#FFD6E7] text-[#C2185B] font-bold px-1.5 py-0.2 rounded-full border border-[#FFC1D9]">
                     AI Agora
@@ -296,7 +298,7 @@ function ShellInner({ children }) {
                 </div>
                 <div>
                   <h3 className="font-extrabold text-base text-[#4A1525]">
-                    Share RIVora
+                    Share RAGora
                   </h3>
                   <p className="text-xs text-[#880E4F]/70 font-semibold">
                     Send to WhatsApp or copy live link
@@ -381,7 +383,7 @@ function ShellInner({ children }) {
                 <span>Want a permanent link that never resets?</span>
               </div>
               <p className="text-amber-900/80 leading-relaxed">
-                Cloudflare quick tunnels stay active while your launcher is running. To get a permanent 24/7 link (e.g. <span className="font-mono font-bold">rivora.vercel.app</span>) that never expires, deploy your GitHub repo to <strong>Vercel</strong> (100% free)!
+                Cloudflare quick tunnels stay active while your launcher is running. To get a permanent 24/7 link (e.g. <span className="font-mono font-bold">ragora.vercel.app</span>) that never expires, deploy your GitHub repo to <strong>Vercel</strong> (100% free)!
               </p>
             </div>
           </div>

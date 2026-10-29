@@ -565,7 +565,7 @@ export default function SubjectDetailPage() {
             <div className="flex items-center justify-between pb-3 border-b border-[#FFD6E7]">
               <div className="flex items-center gap-2 text-xs font-bold text-[#F06292]">
                 <Sparkles className="w-4 h-4" />
-                <span>AI Concept Breakdown</span>
+                <span>Google Gemini AI Concept Breakdown</span>
               </div>
               <button
                 onClick={() => setActiveExplainingTopic(null)}

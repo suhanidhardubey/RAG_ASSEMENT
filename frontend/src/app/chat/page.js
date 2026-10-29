@@ -31,6 +31,7 @@ export default function ChatPage() {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [conversationId, setConversationId] = useState("");
   const [toastMsg, setToastMsg] = useState("");
   const chatEndRef = useRef(null);
 
@@ -104,6 +105,22 @@ export default function ChatPage() {
         api_key: activeKey,
       });
 
+      let activeConvId = conversationId;
+      if (!activeConvId) {
+        activeConvId = `conv_${Date.now()}`;
+        setConversationId(activeConvId);
+        await api.post("/api/conversations", {
+          id: activeConvId,
+          title: query.length > 45 ? query.substring(0, 42) + "..." : query,
+          chat_type: "chat",
+        }).catch(() => {});
+      }
+
+      await api.post(`/api/conversations/${activeConvId}/messages`, {
+        role: "user",
+        content: query,
+      }).catch(() => {});
+
       if (res.data?.success && res.data?.text) {
         setMessages((prev) => [
           ...prev,
@@ -114,6 +131,13 @@ export default function ChatPage() {
             provider: res.data.provider,
           },
         ]);
+
+        await api.post(`/api/conversations/${activeConvId}/messages`, {
+          role: "assistant",
+          content: res.data.text,
+          source: "Gemini AI",
+          llm_used: 1,
+        }).catch(() => {});
       } else {
         const errorText =
           res.data?.error ||
@@ -168,12 +192,21 @@ export default function ChatPage() {
             <Zap className="w-4 h-4 text-[#C2185B]" />
             <span>RAGora Live Gemini AI Assistant</span>
           </div>
-          {(saved || backendConfigured) && (
-            <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-300">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Gemini Ready</span>
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            <Link
+              href="/history"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 hover:bg-white text-[10px] font-extrabold text-[#C2185B] border border-[#FFB8D2] shadow-2xs transition-all"
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              <span>WhatsApp History</span>
+            </Link>
+            {(saved || backendConfigured) && (
+              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-300">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Gemini Ready</span>
+              </span>
+            )}
+          </div>
         </div>
         <h1 className="text-xl sm:text-2xl font-extrabold text-[#4A1525]">
           Conversational AI Tutor & Problem Solver
@@ -192,11 +225,13 @@ export default function ChatPage() {
             </div>
             <div>
               <h3 className="font-extrabold text-xs text-[#4A1525]">
-                Google Gemini API Key
+                Google Gemini AI Connection
               </h3>
               <p className="text-[11px] text-[#880E4F]/70 font-semibold">
-                {saved || backendConfigured
-                  ? "Connected! You can chat directly below."
+                {saved
+                  ? "Connected with custom browser key! Gemini is active."
+                  : backendConfigured
+                  ? "Connected with Google Gemini (Backend Active)! Chat live below or provide custom key."
                   : "Connect your free Gemini key to enable live AI responses."}
               </p>
             </div>
@@ -218,7 +253,7 @@ export default function ChatPage() {
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Paste your Gemini API key (AIzaSy...)"
+              placeholder={backendConfigured && !apiKey ? "Connected via Backend Gemini API Key (Enter custom key to override)" : "Paste your Gemini API key (AIzaSy...)"}
               className="w-full px-3.5 py-2.5 rounded-xl border border-[#FFB8D2] bg-white text-xs font-mono text-[#4A1525] focus:outline-none focus:ring-2 focus:ring-[#F06292]"
             />
           </div>
@@ -242,6 +277,30 @@ export default function ChatPage() {
             )}
           </div>
         </form>
+      </div>
+
+      {/* Quick Prompt Chips */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+        <span className="text-[10px] font-bold text-[#880E4F] uppercase tracking-wider shrink-0 flex items-center gap-1">
+          <Sparkles className="w-3 h-3 text-[#F06292]" />
+          <span>Ask Gemini:</span>
+        </span>
+        {[
+          "Explain Dijkstra's Algorithm step-by-step",
+          "Deadlock vs Starvation in Operating Systems",
+          "Chomsky Hierarchy explanation with diagrams",
+          "B-Tree vs B+ Tree differences for exams",
+        ].map((promptText, i) => (
+          <button
+            key={i}
+            onClick={() => {
+              setInputMessage(promptText);
+            }}
+            className="shrink-0 bg-white hover:bg-[#FFF0F5] text-[#880E4F] border border-[#FFC1D9] px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
+          >
+            💡 {promptText}
+          </button>
+        ))}
       </div>
 
       {/* Live Chat Box */}

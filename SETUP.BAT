@@ -1,10 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
-title RAG Assistant - System Setup
+title RAGora - System Setup
 color 0B
 
 echo ===================================================
-echo     RAG Assistant Study Companion - System Setup
+echo     RAGora Study Agora - System Setup
 echo ===================================================
 echo.
 

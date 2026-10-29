@@ -22,25 +22,29 @@
 ## 📁 Project Structure
 
 ```
-RAG_ASSEMENT/
-├── frontend/                     # Next.js 15 (App Router) + Tailwind CSS
+RAGora/
+├── frontend/                     # Next.js 16 (App Router) + Tailwind CSS
 │   └── src/app/
 │       ├── page.js               # Welcome / Live Student Dashboard
 │       ├── upload/page.js        # Upload & Document Extraction Pipeline
 │       ├── dashboard/page.js     # Main Student Companion Dashboard
+│       ├── history/page.js       # WhatsApp-Style Chat History & Global Search
 │       ├── summary/page.js       # Summary & TF-IDF Keywords
 │       ├── flashcards/page.js    # 3D Flip Flashcards & XP Rewards
 │       ├── quiz/page.js          # Timed MCQ Quiz + Progress Chart
 │       ├── leaderboard/page.js   # Dynamic Podium & Live Rankings
 │       ├── profile/page.js       # Student Registration, Login & Analytics
-│       └── chat/page.js          # LLM API Key Configuration
+│       ├── ask/page.js           # RAG Document Q&A with Gemini AI & Topic Search
+│       └── chat/page.js          # Google Gemini AI Conversational Assistant
 │
 ├── backend/                      # FastAPI (Python)
 │   ├── main.py                   # API routes & document extraction pipeline
 │   ├── database.py               # SQLite schema & persistence functions
+│   ├── llm.py                    # Google Gemini AI integration engine
+│   ├── syllabi.py                # University curriculum data
 │   ├── requirements.txt          # Python dependencies
 │   ├── data/
-│   │   └── rag_assistant.db      # SQLite database (auto-created)
+│   │   └── ragora.db             # SQLite database (auto-created)
 │   └── uploads/                  # Extracted study files
 │
 ├── SETUP.BAT                     # 1-Click setup for dependencies
@@ -92,4 +96,23 @@ Run `START_PUBLIC.BAT` to instantly get a free, secure HTTPS URL (e.g. `https://
    - Root directory: `frontend`
    - Add Environment Variable: `NEXT_PUBLIC_API_URL=https://your-backend.onrender.com`
    - Hit Deploy!
+
+---
+
+## 💬 Chat History, Global Search & AI Tutor Search Features
+
+1. **Dashboard History (WhatsApp View)**:
+   - Available on the Dashboard (`/dashboard`) and via sidebar navigation item **Chat History** (`/history`).
+   - WhatsApp-style conversation cards with pastel pink avatars, conversation titles, relative timestamps ("Today", "Yesterday", "Oct 28"), last message previews, and message counts.
+2. **Global Keyword Search**:
+   - Live search box across all previous conversations, matching both **user questions** and **AI responses**.
+   - Displays highlighted keyword snippets and match counts.
+3. **AI Tutor Search**:
+   - Dedicated search bar in AI Tutor (`/ask`) to find previous discussions related to a searched keyword or topic.
+   - Recent study topic chips for 1-click topic switching.
+4. **Open Old Chats & Continued Chatting**:
+   - Clicking any conversation opens the original thread, automatically scrolls to and highlights relevant messages, and allows seamless continuation by asking follow-up questions.
+5. **Persistent SQLite Storage**:
+   - Stored in `backend/data/ragora.db` under `conversations` and `messages` tables with cascade deletion and indexing.
+
 

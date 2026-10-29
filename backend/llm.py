@@ -1,7 +1,7 @@
 """
-LLM Integration Engine for RAG Assistant.
+LLM Integration Engine for RAGora.
 Supports:
-1. Google Gemini (gemini-1.5-flash, gemini-2.0-flash, gemini-pro)
+1. Google Gemini (gemini-2.5-flash, gemini-flash-latest, gemini-3-flash-preview, gemini-2.0-flash, gemini-1.5-flash)
 2. OpenAI (gpt-4o-mini, gpt-4o)
 3. Groq (llama-3.3-70b-versatile)
 4. Local Ollama (llama3, mistral)
@@ -41,12 +41,12 @@ def load_local_env():
 load_local_env()
 
 
-def call_gemini(prompt: str, api_key: str = None, model: str = "gemini-3-flash-preview") -> str:
+def call_gemini(prompt: str, api_key: str = None, model: str = "gemini-2.5-flash") -> str:
     key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not key:
         raise ValueError("No Gemini API key provided. Add GEMINI_API_KEY to backend/.env or enter your key in the web UI.")
 
-    models_to_try = [model, "gemini-3-flash-preview", "gemini-3.1-flash-lite-preview", "gemini-3.8-flash", "gemini-flash-latest"]
+    models_to_try = [model, "gemini-2.5-flash", "gemini-flash-latest", "gemini-3-flash-preview", "gemini-2.0-flash", "gemini-1.5-flash"]
     seen = set()
     ordered_models = [m for m in models_to_try if not (m in seen or seen.add(m))]
 
@@ -220,7 +220,7 @@ def query_llm(
 
     try:
         if prov == "gemini":
-            chosen_model = model or "gemini-3-flash-preview"
+            chosen_model = model or "gemini-2.5-flash"
             text = call_gemini(prompt, api_key=api_key, model=chosen_model)
             return {"success": True, "text": text, "provider": "gemini", "model": chosen_model}
 

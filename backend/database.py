@@ -1,15 +1,31 @@
 """
-Database management for RAG Assistant using SQLite.
+Database management for RAGora using SQLite.
 Stores real users, uploaded documents, quiz history, flashcard progress, and activity logs.
 """
 
 import sqlite3
 import json
 import os
+import shutil
+import hashlib
+import uuid
 from datetime import datetime, date, timedelta
 from pathlib import Path
 
-DB_PATH = Path(os.environ.get("DATABASE_PATH", str(Path(__file__).resolve().parent / "data" / "rag_assistant.db")))
+DATA_DIR = Path(__file__).resolve().parent / "data"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+legacy_db = DATA_DIR / "rag_assistant.db"
+ragora_db = DATA_DIR / "ragora.db"
+
+# Migrate legacy database to ragora.db if exists
+if legacy_db.exists() and not ragora_db.exists():
+    try:
+        shutil.copy2(legacy_db, ragora_db)
+    except Exception:
+        pass
+
+DB_PATH = Path(os.environ.get("DATABASE_PATH", str(ragora_db if ragora_db.exists() else legacy_db)))
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
@@ -186,6 +202,43 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
     """)
+
+    # 10. Conversations Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS conversations (
+            id TEXT PRIMARY KEY,
+            user_id INTEGER,
+            title TEXT NOT NULL,
+            chat_type TEXT DEFAULT 'tutor',
+            doc_id TEXT,
+            subject_id TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    """)
+
+    # 11. Messages Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            conversation_id TEXT NOT NULL,
+            role TEXT NOT NULL,
+            content TEXT NOT NULL,
+            source TEXT,
+            citations_json TEXT,
+            confidence REAL DEFAULT 0.9,
+            llm_used INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (conversation_id) REFERENCES conversations (id) ON DELETE CASCADE
+        )
+    """)
+
+    # Safe index creation
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_conversations_user ON conversations (user_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_conversations_updated ON conversations (updated_at)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages (conversation_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_messages_created ON messages (created_at)")
 
     conn.commit()
     conn.close()
@@ -527,6 +580,192 @@ def toggle_revision_reminder(reminder_id: int, user_id: int):
         conn.commit()
     conn.close()
     return True
+
+
+# ── Conversations & Messages (Persistent History) ──
+def create_conversation(conv_id: str, title: str, user_id: int | None = None, chat_type: str = "tutor", doc_id: str | None = None, subject_id: str | None = None):
+    conn = get_db()
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    clean_title = (title or "New Conversation").strip()
+    if len(clean_title) > 80:
+        clean_title = clean_title[:77] + "..."
+
+    cursor.execute("""
+        INSERT INTO conversations (id, user_id, title, chat_type, doc_id, subject_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET title = excluded.title, updated_at = excluded.updated_at
+    """, (conv_id, user_id, clean_title, chat_type, doc_id, subject_id, now_str, now_str))
+    conn.commit()
+    row = conn.execute("SELECT * FROM conversations WHERE id = ?", (conv_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_conversation(conv_id: str):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM conversations WHERE id = ?", (conv_id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    conv = dict(row)
+    msg_rows = conn.execute("""
+        SELECT * FROM messages WHERE conversation_id = ? ORDER BY id ASC
+    """, (conv_id,)).fetchall()
+    conn.close()
+
+    messages = []
+    for m in msg_rows:
+        md = dict(m)
+        if md.get("citations_json"):
+            try:
+                md["citations"] = json.loads(md["citations_json"])
+            except Exception:
+                md["citations"] = []
+        else:
+            md["citations"] = []
+        messages.append(md)
+    conv["messages"] = messages
+    return conv
+
+
+def add_message(conv_id: str, role: str, content: str, source: str = "", citations: list = None, confidence: float = 0.9, llm_used: int = 0):
+    conn = get_db()
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    c_json = json.dumps(citations or [])
+
+    # Ensure conversation exists
+    existing = conn.execute("SELECT id FROM conversations WHERE id = ?", (conv_id,)).fetchone()
+    if not existing:
+        derived_title = content[:45] + ("..." if len(content) > 45 else "")
+        cursor.execute("""
+            INSERT INTO conversations (id, title, chat_type, created_at, updated_at)
+            VALUES (?, ?, 'tutor', ?, ?)
+        """, (conv_id, derived_title, now_str, now_str))
+
+    cursor.execute("""
+        INSERT INTO messages (conversation_id, role, content, source, citations_json, confidence, llm_used, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (conv_id, role, content.strip(), source or "", c_json, confidence, 1 if llm_used else 0, now_str))
+    msg_id = cursor.lastrowid
+
+    cursor.execute("UPDATE conversations SET updated_at = ? WHERE id = ?", (now_str, conv_id))
+    conn.commit()
+
+    row = conn.execute("SELECT * FROM messages WHERE id = ?", (msg_id,)).fetchone()
+    conn.close()
+    res = dict(row)
+    res["citations"] = citations or []
+    return res
+
+
+def get_conversations(user_id: int | None = None, search: str | None = None, chat_type: str | None = None, limit: int = 50):
+    conn = get_db()
+    query_terms = search.strip().lower() if search and search.strip() else None
+
+    sql = "SELECT c.* FROM conversations c WHERE 1=1"
+    params = []
+
+    if user_id is not None:
+        sql += " AND (c.user_id = ? OR c.user_id IS NULL)"
+        params.append(user_id)
+
+    if chat_type:
+        sql += " AND c.chat_type = ?"
+        params.append(chat_type)
+
+    if query_terms:
+        sql += """
+            AND (
+                LOWER(c.title) LIKE ?
+                OR EXISTS (
+                    SELECT 1 FROM messages m
+                    WHERE m.conversation_id = c.id
+                    AND LOWER(m.content) LIKE ?
+                )
+            )
+        """
+        pattern = f"%{query_terms}%"
+        params.extend([pattern, pattern])
+
+    sql += " ORDER BY c.updated_at DESC LIMIT ?"
+    params.append(limit)
+
+    rows = conn.execute(sql, params).fetchall()
+    results = []
+
+    for r in rows:
+        cd = dict(r)
+        # Get message count
+        cnt = conn.execute("SELECT COUNT(*) FROM messages WHERE conversation_id = ?", (cd["id"],)).fetchone()[0]
+        cd["message_count"] = cnt
+
+        # Get last message
+        last = conn.execute("""
+            SELECT id, role, content, created_at FROM messages
+            WHERE conversation_id = ?
+            ORDER BY id DESC LIMIT 1
+        """, (cd["id"],)).fetchone()
+        if last:
+            cd["last_message"] = dict(last)
+        else:
+            cd["last_message"] = None
+
+        # If searching, get matching messages with context previews
+        if query_terms:
+            m_rows = conn.execute("""
+                SELECT id, role, content, created_at FROM messages
+                WHERE conversation_id = ? AND LOWER(content) LIKE ?
+                ORDER BY id ASC
+            """, (cd["id"], f"%{query_terms}%")).fetchall()
+
+            matching = []
+            for mr in m_rows:
+                md = dict(mr)
+                text = md["content"]
+                pos = text.lower().find(query_terms)
+                if pos != -1:
+                    start = max(0, pos - 40)
+                    end = min(len(text), pos + len(query_terms) + 80)
+                    snippet = ("..." if start > 0 else "") + text[start:end] + ("..." if end < len(text) else "")
+                else:
+                    snippet = text[:120] + ("..." if len(text) > 120 else "")
+                md["snippet"] = snippet
+                matching.append(md)
+            cd["matching_messages"] = matching
+        else:
+            cd["matching_messages"] = []
+
+        results.append(cd)
+
+    conn.close()
+    return results
+
+
+def delete_conversation(conv_id: str, user_id: int | None = None):
+    conn = get_db()
+    cursor = conn.cursor()
+    if user_id is not None:
+        cursor.execute("DELETE FROM messages WHERE conversation_id = ? AND EXISTS (SELECT 1 FROM conversations WHERE id = ? AND (user_id = ? OR user_id IS NULL))", (conv_id, conv_id, user_id))
+        cursor.execute("DELETE FROM conversations WHERE id = ? AND (user_id = ? OR user_id IS NULL)", (conv_id, user_id))
+    else:
+        cursor.execute("DELETE FROM messages WHERE conversation_id = ?", (conv_id,))
+        cursor.execute("DELETE FROM conversations WHERE id = ?", (conv_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+
+def update_conversation_title(conv_id: str, title: str):
+    conn = get_db()
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    cursor.execute("UPDATE conversations SET title = ?, updated_at = ? WHERE id = ?", (title.strip(), now_str, conv_id))
+    conn.commit()
+    row = conn.execute("SELECT * FROM conversations WHERE id = ?", (conv_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
 
 
 # Initialize tables when module is imported

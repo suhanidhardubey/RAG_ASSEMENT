@@ -20,6 +20,7 @@ import {
   Video,
   Gamepad2,
   Calendar,
+  MessageSquare,
 } from "lucide-react";
 
 const features = [
@@ -62,6 +63,14 @@ const features = [
     color: "bg-[#FFF0F5] text-[#F06292]",
     badge: "AI RAG",
     href: "/ask",
+  },
+  {
+    icon: MessageSquare,
+    title: "Chat History (WhatsApp View)",
+    desc: "Persistent conversations with global keyword search across past user questions and AI explanations.",
+    color: "bg-[#FFD6E7] text-[#C2185B]",
+    badge: "Saved Chats",
+    href: "/history",
   },
   {
     icon: Calendar,

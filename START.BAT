@@ -28,11 +28,11 @@ if exist "%~dp0backend\venv\Scripts\python.exe" (
 
 :: 3. Launch FastAPI Backend in a new window
 echo [1/2] Starting FastAPI Backend on http://127.0.0.1:8000 ...
-start "RAG Assistant - Backend (FastAPI)" cmd /k "cd /d "%~dp0backend" && %BACKEND_PY% -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload"
+start "RAGora - Backend (FastAPI)" cmd /k "cd /d "%~dp0backend" && %BACKEND_PY% -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload"
 
 :: 4. Launch Next.js Frontend in a new window
 echo [2/2] Starting Next.js Frontend on http://localhost:3000 ...
-start "RAG Assistant - Frontend (Next.js)" cmd /k "cd /d "%~dp0frontend" && npm run dev"
+start "RAGora - Frontend (Next.js)" cmd /k "cd /d "%~dp0frontend" && npm run dev"
 
 echo.
 echo Waiting 4 seconds for services to initialize...
@@ -43,7 +43,7 @@ start http://localhost:3000
 
 echo.
 echo ===================================================
-echo   RAG Assistant is now RUNNING!
+echo   RAGora is now RUNNING!
 echo.
 echo   - Web App UI:        http://localhost:3000
 echo   - Backend Swagger:   http://127.0.0.1:8000/docs

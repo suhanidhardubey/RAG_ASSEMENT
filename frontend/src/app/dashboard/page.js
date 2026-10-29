@@ -18,6 +18,9 @@ import {
   FileText,
   Upload,
   Sparkles,
+  MessageSquare,
+  Search,
+  MessageCircle,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -27,17 +30,21 @@ export default function DashboardPage() {
   const [documents, setDocuments] = useState([]);
   const [selectedDocId, setSelectedDocId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [recentConversations, setRecentConversations] = useState([]);
+  const [historySearch, setHistorySearch] = useState("");
 
   useEffect(() => {
     Promise.all([
       api.get("/api/user/me"),
       api.get("/api/dashboard/stats"),
       api.get("/api/documents"),
+      api.get("/api/conversations?limit=6").catch(() => ({ data: [] })),
     ])
-      .then(([userRes, statsRes, docsRes]) => {
+      .then(([userRes, statsRes, docsRes, convRes]) => {
         setUser(userRes.data);
         setStats(statsRes.data);
         setDocuments(docsRes.data);
+        setRecentConversations(convRes.data || []);
         if (docsRes.data.length > 0) {
           const stored = localStorage.getItem("activeDocId");
           const active = docsRes.data.find((d) => d.id === stored) || docsRes.data[0];
@@ -80,6 +87,14 @@ export default function DashboardPage() {
       desc: "Quiz Battle, Memory Match, Find the Bug & Daily Streak",
       badge: "Earn XP",
       badgeBg: "bg-[#F06292] text-white",
+    },
+    {
+      href: "/history",
+      icon: "💬",
+      title: "Chat History",
+      desc: "WhatsApp-style past conversations, global search & resume chatting",
+      badge: "WhatsApp",
+      badgeBg: "bg-white text-[#C2185B]",
     },
     {
       href: "/ask",
@@ -245,6 +260,131 @@ export default function DashboardPage() {
             </div>
           );
         })}
+      </div>
+
+      {/* ─── WhatsApp Chat History Section ─── */}
+      <div className="bg-white p-5 rounded-3xl border border-[#FFD6E7] shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FFD6E7] to-[#FFC1D9] flex items-center justify-center text-xl shadow-2xs">
+              💬
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-extrabold text-sm text-[#4A1525]">
+                  Dashboard Chat History
+                </h3>
+                <span className="text-[10px] font-extrabold text-[#25D366] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  WhatsApp View
+                </span>
+              </div>
+              <p className="text-[11px] text-[#880E4F]/70 font-semibold">
+                View previous conversations, search topics & continue chatting
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/history"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FFF0F5] hover:bg-[#FFD6E7] border border-[#FFD6E7] text-xs font-extrabold text-[#C2185B] transition-all self-start sm:self-auto"
+          >
+            <span>View All ({recentConversations.length})</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* Dashboard Quick Search Box */}
+        <div className="relative">
+          <Search className="w-4 h-4 text-[#880E4F]/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={historySearch}
+            onChange={(e) => setHistorySearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && historySearch.trim()) {
+                router.push(`/history?search=${encodeURIComponent(historySearch.trim())}`);
+              }
+            }}
+            placeholder="Search keyword across all past chats (press Enter for global search)..."
+            className="w-full pl-10 pr-24 py-2.5 rounded-2xl bg-[#FFF0F5] border border-[#FFD6E7] text-xs font-bold text-[#4A1525] placeholder:text-[#880E4F]/50 focus:outline-none focus:border-[#F06292] transition-colors"
+          />
+          {historySearch.trim() && (
+            <button
+              onClick={() => router.push(`/history?search=${encodeURIComponent(historySearch.trim())}`)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 rounded-xl bg-[#F06292] text-white text-[10px] font-extrabold hover:bg-[#E91E63] transition-colors"
+            >
+              Search
+            </button>
+          )}
+        </div>
+
+        {/* WhatsApp-Style Chat Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {recentConversations
+            .filter((c) =>
+              historySearch
+                ? c.title.toLowerCase().includes(historySearch.toLowerCase()) ||
+                  c.last_message?.content?.toLowerCase().includes(historySearch.toLowerCase())
+                : true
+            )
+            .slice(0, 6)
+            .map((c) => (
+              <div
+                key={c.id}
+                onClick={() => router.push(`/history?id=${c.id}`)}
+                className="bg-[#FFF5F8] hover:bg-[#FFD6E7]/50 p-3.5 rounded-2xl border border-[#FFD6E7] hover:border-[#F06292] transition-all cursor-pointer group flex flex-col justify-between space-y-2 shadow-2xs"
+              >
+                <div className="flex items-start gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-sm shadow-2xs shrink-0 border border-[#FFD6E7]">
+                    🤖
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-extrabold text-xs text-[#4A1525] truncate group-hover:text-[#C2185B]">
+                        {c.title}
+                      </h4>
+                    </div>
+                    <p className="text-[10px] text-[#880E4F]/70 font-semibold line-clamp-2 mt-0.5">
+                      {c.last_message?.content || "Click to open conversation..."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] pt-1 border-t border-[#FFD6E7]/50 text-[#880E4F]/70 font-semibold">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-[#F06292]" />
+                    <span>
+                      {c.updated_at
+                        ? new Date(c.updated_at).toLocaleDateString([], { month: "short", day: "numeric" })
+                        : "Recent"}
+                    </span>
+                  </span>
+                  <div className="flex items-center gap-1 text-[#F06292] font-extrabold group-hover:translate-x-0.5 transition-transform">
+                    <span>Resume</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </div>
+                </div>
+              </div>
+            ))}
+
+          {recentConversations.length === 0 && (
+            <div className="col-span-full p-6 text-center bg-[#FFF5F8] rounded-2xl border border-[#FFD6E7] space-y-2">
+              <p className="text-xs font-bold text-[#4A1525]">
+                No previous conversations yet
+              </p>
+              <p className="text-[11px] text-[#880E4F]/70">
+                Ask questions to the AI Tutor to build your persistent WhatsApp-style chat history!
+              </p>
+              <Link
+                href="/ask"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#F06292] hover:bg-[#E91E63] text-white text-xs font-extrabold shadow-2xs transition-all"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Ask AI Tutor Now</span>
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ─── Study Modules Grid ─── */}
