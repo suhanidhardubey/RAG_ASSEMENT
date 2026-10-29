@@ -323,7 +323,7 @@ function HistoryInner() {
         </Link>
       </div>
 
-      {/* ─── WhatsApp-Style Dual-Pane Container ─── */}
+      {/* ─── Dual-Pane Container ─── */}
       <div className="bg-white rounded-3xl border border-[#FFD6E7] shadow-sm overflow-hidden h-[calc(100vh-210px)] min-h-[580px] grid grid-cols-1 md:grid-cols-12">
         {/* ══════════════════════════════════════════════════════════ */}
         {/* LEFT PANE: Conversation List & Global Search (5 cols)     */}
@@ -333,7 +333,7 @@ function HistoryInner() {
             showMobileChat ? "hidden md:flex" : "flex"
           }`}
         >
-          {/* WhatsApp List Header */}
+          {/* Conversation List Header */}
           <div className="p-3.5 border-b border-[#FFD6E7] bg-white flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#FFC1D9] to-[#FFD6E7] flex items-center justify-center text-base shadow-2xs">
@@ -525,7 +525,7 @@ function HistoryInner() {
         </div>
 
         {/* ══════════════════════════════════════════════════════════ */}
-        {/* RIGHT PANE: Active WhatsApp Conversation View (7 cols)    */}
+        {/* RIGHT PANE: Active Conversation View (7 cols)    */}
         {/* ══════════════════════════════════════════════════════════ */}
         <div
           className={`md:col-span-7 flex flex-col h-full bg-[#FFF5F8]/30 ${
@@ -534,7 +534,7 @@ function HistoryInner() {
         >
           {selectedConvId && activeConv ? (
             <>
-              {/* WhatsApp Chat Top Header */}
+              {/* Chat Top Header */}
               <div className="p-3.5 border-b border-[#FFD6E7] bg-white flex items-center justify-between gap-3 shadow-2xs">
                 <div className="flex items-center gap-2.5 min-w-0">
                   {/* Mobile Back Button */}

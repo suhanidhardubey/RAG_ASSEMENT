@@ -28,7 +28,7 @@ RAGora/
 │       ├── page.js               # Welcome / Live Student Dashboard
 │       ├── upload/page.js        # Upload & Document Extraction Pipeline
 │       ├── dashboard/page.js     # Main Student Companion Dashboard
-│       ├── history/page.js       # WhatsApp-Style Chat History & Global Search
+│       ├── history/page.js       # Persistent Chat History & Global Search
 │       ├── summary/page.js       # Summary & TF-IDF Keywords
 │       ├── flashcards/page.js    # 3D Flip Flashcards & XP Rewards
 │       ├── quiz/page.js          # Timed MCQ Quiz + Progress Chart
@@ -101,9 +101,9 @@ Run `START_PUBLIC.BAT` to instantly get a free, secure HTTPS URL (e.g. `https://
 
 ## 💬 Chat History, Global Search & AI Tutor Search Features
 
-1. **Dashboard History (WhatsApp View)**:
+1. **Dashboard History**:
    - Available on the Dashboard (`/dashboard`) and via sidebar navigation item **Chat History** (`/history`).
-   - WhatsApp-style conversation cards with pastel pink avatars, conversation titles, relative timestamps ("Today", "Yesterday", "Oct 28"), last message previews, and message counts.
+   - Clean conversation cards with pastel pink avatars, conversation titles, relative timestamps ("Today", "Yesterday", "Oct 28"), last message previews, and message counts.
 2. **Global Keyword Search**:
    - Live search box across all previous conversations, matching both **user questions** and **AI responses**.
    - Displays highlighted keyword snippets and match counts.

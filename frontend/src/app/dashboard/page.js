@@ -262,7 +262,7 @@ export default function DashboardPage() {
         })}
       </div>
 
-      {/* ─── WhatsApp Chat History Section ─── */}
+      {/* ─── Chat History Section ─── */}
       <div className="bg-white p-5 rounded-3xl border border-[#FFD6E7] shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
@@ -318,7 +318,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* WhatsApp-Style Chat Cards Grid */}
+        {/* Chat Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {recentConversations
             .filter((c) =>
