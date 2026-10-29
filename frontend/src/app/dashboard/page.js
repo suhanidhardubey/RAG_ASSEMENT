@@ -92,8 +92,8 @@ export default function DashboardPage() {
       href: "/history",
       icon: "💬",
       title: "Chat History",
-      desc: "WhatsApp-style past conversations, global search & resume chatting",
-      badge: "WhatsApp",
+      desc: "Past conversations, global search & resume chatting",
+      badge: "Saved",
       badgeBg: "bg-white text-[#C2185B]",
     },
     {
@@ -274,8 +274,8 @@ export default function DashboardPage() {
                 <h3 className="font-extrabold text-sm text-[#4A1525]">
                   Dashboard Chat History
                 </h3>
-                <span className="text-[10px] font-extrabold text-[#25D366] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  WhatsApp View
+                <span className="text-[10px] font-extrabold text-[#C2185B] bg-[#FFD6E7] px-2 py-0.5 rounded-full border border-[#FFB8D2]">
+                  Saved Chats
                 </span>
               </div>
               <p className="text-[11px] text-[#880E4F]/70 font-semibold">
@@ -373,7 +373,7 @@ export default function DashboardPage() {
                 No previous conversations yet
               </p>
               <p className="text-[11px] text-[#880E4F]/70">
-                Ask questions to the AI Tutor to build your persistent WhatsApp-style chat history!
+                Ask questions to the AI Tutor to build your persistent study chat history!
               </p>
               <Link
                 href="/ask"

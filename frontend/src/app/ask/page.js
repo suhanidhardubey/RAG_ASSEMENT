@@ -295,7 +295,7 @@ function AskRAGContent() {
             className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 hover:bg-white text-[11px] font-extrabold text-[#C2185B] border border-[#FFB8D2] shadow-2xs transition-all"
           >
             <MessageSquare className="w-3.5 h-3.5" />
-            <span>WhatsApp History View</span>
+            <span>Chat History</span>
           </Link>
         </div>
         <h1 className="text-xl sm:text-2xl font-extrabold text-[#4A1525]">
@@ -456,7 +456,7 @@ function AskRAGContent() {
               href={`/history?id=${activeConvId}`}
               className="px-2.5 py-1 rounded-xl bg-white hover:bg-[#FFD6E7] border border-[#FFD6E7] text-[10px] font-extrabold text-[#880E4F] transition-all"
             >
-              WhatsApp View
+              Full History
             </Link>
             <button
               onClick={handleNewChat}

@@ -198,7 +198,7 @@ export default function ChatPage() {
               className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 hover:bg-white text-[10px] font-extrabold text-[#C2185B] border border-[#FFB8D2] shadow-2xs transition-all"
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              <span>WhatsApp History</span>
+              <span>Chat History</span>
             </Link>
             {(saved || backendConfigured) && (
               <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-300">

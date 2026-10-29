@@ -304,7 +304,7 @@ function HistoryInner() {
         <div>
           <div className="flex items-center gap-2 text-[11px] font-bold text-[#880E4F] uppercase tracking-wider mb-1">
             <MessageSquare className="w-4 h-4 text-[#C2185B]" />
-            <span>Persistent Conversation Storage • WhatsApp Style</span>
+            <span>Persistent Conversation Storage • Study History</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#4A1525]">
             Chat History & Global Search

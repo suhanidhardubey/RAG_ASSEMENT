@@ -66,7 +66,7 @@ const features = [
   },
   {
     icon: MessageSquare,
-    title: "Chat History (WhatsApp View)",
+    title: "Chat History",
     desc: "Persistent conversations with global keyword search across past user questions and AI explanations.",
     color: "bg-[#FFD6E7] text-[#C2185B]",
     badge: "Saved Chats",
